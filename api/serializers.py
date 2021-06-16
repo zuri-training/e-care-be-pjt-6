@@ -7,7 +7,7 @@ from .models import Patient, HealthOfficer, Hospital, MedicalRecord
 
 # serializers definition here
 
-class HealthOfficerSerializer(serializers.ModelSerializer):
+class HealthOfficerSerializer(ModelSerializer):
     class Meta:
         model = HealthOfficer
         fields = ["__all__"]
