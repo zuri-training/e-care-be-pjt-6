@@ -10,4 +10,4 @@ from .models import Patient, HealthOfficer, Hospital, MedicalRecord
 class HealthOfficerSerializer(ModelSerializer):
     class Meta:
         model = HealthOfficer
-        fields = ["__all__"]
+        fields = "__all__"
