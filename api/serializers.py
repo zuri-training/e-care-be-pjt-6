@@ -11,3 +11,8 @@ class HealthOfficerSerializer(ModelSerializer):
     class Meta:
         model = HealthOfficer
         fields = "__all__"
+
+class HospitalSerializer(ModelSerializer):
+    class Meta:
+        model = Hospital
+        fields = "__all__"
