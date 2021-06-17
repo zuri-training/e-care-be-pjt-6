@@ -53,14 +53,18 @@ class ModelTestCase(TestCase):
         self.hospital2.save()
 
         self.medical_record1 = MedicalRecord.objects.create(
-            blood_pressure='94/145', blood_group='A+', genotype='AA', sugar_level=250.7,
-            diabetic=False, patient=self.patient1, health_officer=self.officer1
+            category='Analysis', test_type='CT Scan of Abdomen',
+            result='Little abnormal growth on the large intestine',
+            prescription='daily intake of 5 litres of water, Eating dinner latest 5PM',
+            patient=self.patient1, health_officer=self.officer1, hospital=self.hospital1
         )
         self.medical_record1.save()
 
         self.medical_record2 = MedicalRecord.objects.create(
-            blood_pressure='99/168', blood_group='A+', genotype='AA', sugar_level=290.2,
-            diabetic=False, patient=self.patient1, health_officer=self.officer1
+            category='Examine', test_type='Blood Test',
+            result='Negative',
+            prescription='',
+            patient=self.patient1, health_officer=self.officer1, hospital=self.hospital1
         )
         self.medical_record2.save()
     
