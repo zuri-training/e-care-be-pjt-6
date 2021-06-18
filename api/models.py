@@ -1,8 +1,8 @@
 import uuid
 
 from django.db import models
-from django.db.models.query import FlatValuesListIterable
 from django.urls import reverse_lazy
+
 
 # Create your models here.
 class Patient(models.Model):
@@ -54,3 +54,44 @@ class HealthOfficer(models.Model):
     def get_absolute_url(self):
         return reverse_lazy('health-officer-get-update', args=[str(self.uuid)])
 
+
+class Hospital(models.Model):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    name = models.CharField(max_length=256)
+    specialty = models.CharField(max_length=64, default='general')
+    city = models.CharField(max_length=16)
+    lga = models.CharField(max_length=64)
+    state = models.CharField(max_length=16)
+    address = models.TextField(null=True, blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    records = models.ManyToManyField('MedicalRecord')
+    patients = models.ManyToManyField('Patient')
+    health_officers = models.ManyToManyField('HealthOfficers')
+
+    def __repr__(self):
+        return str(self.name)
+    
+    __str__ = __repr__
+
+    def get_absolute_url(self):
+        return reverse_lazy('hospital-get-update', args=[str(self.uuid)])
+
+
+class MedicalRecord(models.Model):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    test_category = models.CharField(max_length=256, default='Examine')
+    test_type = models.CharField(max_length=256, default='Blood Test')
+    test_result = models.TextField(default='')
+    prescription = models.TextField(default='')
+    health_officer = models.OneToOneField('HealthOfficer', on_delete=models.CASCADE)
+    hospital = models.OneToOneField('Hospital', on_delete=models.CASCADE, null=True, blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(null=True, blank=True)
+
+    def __repr__(self):
+        return str(self.test_category)
+    
+    __str__ = __repr__
+
+    def get_absolute_url(self):
+        return reverse_lazy('medical-record-get-update', args=[str(self.uuid)])
