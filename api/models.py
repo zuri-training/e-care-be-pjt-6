@@ -64,7 +64,6 @@ class Hospital(models.Model):
     state = models.CharField(max_length=16)
     address = models.TextField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
-    records = models.ManyToManyField('MedicalRecord')
     patients = models.ManyToManyField('Patient')
     health_officers = models.ManyToManyField('HealthOfficers')
 
