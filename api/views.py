@@ -28,7 +28,7 @@ class PatientCreateListAPIView(APIView):
 
 class PatientRetrieveUpdateAPIView(APIView):
     serializer_class = PatientSerializer
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, uuid, format=None):
         patient = Patient.objects.filter(uuid=uuid).first()
