@@ -9,8 +9,8 @@ from .views import PatientCreateListAPIView, PatientRetrieveUpdateAPIView
 
 
 urlpatterns = [
-    path('user/patients/', PatientCreateListAPIView.as_view(), name='list-create'),
-    path('user/patients/<str:uuid>/', PatientRetrieveUpdateAPIView.as_view(), name='get-update'),
+    path('user/patients/', PatientCreateListAPIView.as_view(), name='patient-list-create'),
+    path('user/patients/<str:uuid>/', PatientRetrieveUpdateAPIView.as_view(), name='patient-get-update'),
 
     path('user/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('user/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
