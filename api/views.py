@@ -1,10 +1,16 @@
-from functools import partial
+from django.core.exceptions import ObjectDoesNotExist
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 
-from .models import Patient, HealthOfficer, Hospital
-from .serializers import PatientSerializer, HealthOfficerSerializer, HospitalSerializer
+from .models import Patient, HealthOfficer, MedicalRecord, Hospital
+from .serializers import (
+    PatientSerializer,
+    HealthOfficerSerializer,
+    MedicalRecordSerializer,
+    HospitalSerializer
+)
 
 
 # Create your views here.
@@ -92,6 +98,63 @@ class HealthOfficerRetrieveUpdateAPIView(APIView):
                 return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response({}, status=status.HTTP_404_NOT_FOUND)
+
+
+class MedicalRecordListCreateAPIView(APIView):
+    serializer_class = MedicalRecordSerializer
+
+    def get(self, request, uuid, format=None):
+        patient = Patient.objects.filter(uuid=uuid).first()
+
+        if patient:
+            medical_records = MedicalRecord.objects.filter(patient=patient).all()
+            serializer = self.serializer_class(medical_records, many=True)
+            return Response(serializer.data)
+        return Response({}, status=status.HTTP_404_NOT_FOUND)
+    
+    def post(self, request, uuid, format=None):
+        patient = Patient.objects.filter(uuid=uuid).first()
+
+        if patient:
+            context = {'patient': patient}
+            serializer = self.serializer_class(data=request.data, context=context)
+        
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({}, status=status.HTTP_404_NOT_FOUND)
+
+
+class MedicalRecordRetrieveUpdateAPIView(APIView):
+    serializer_class = MedicalRecordSerializer
+
+    # uuid1-Patient uuid, uuid2-MedicalRecord uuid
+    def get(self, request, uuid1, uuid2, format=None):
+        try:
+            patient = Patient.objects.filter(uuid=uuid1).first()
+            medical_record = patient.medicalrecord_set.filter(uuid=uuid2).first()
+        except ObjectDoesNotExist:
+            return Response({}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = self.serializer_class(medical_record)
+        return Response(serializer.data)
+    
+    def put(self, request, uuid1, uuid2, format=None):
+        try:
+            patient = Patient.objects.filter(uuid=uuid1).first()
+            medical_record = patient.medicalrecord_set.filter(uuid=uuid2).first()
+        except ObjectDoesNotExist:
+            return Response({}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = self.serializer_class(
+            instance=medical_record, data=request.data)
+        
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class HospitalCreateListAPIView(APIView):
     serializer_class = HospitalSerializer
