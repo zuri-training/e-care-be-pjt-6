@@ -4,11 +4,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 
-from .models import Patient, HealthOfficer, MedicalRecord
+from .models import Patient, HealthOfficer, MedicalRecord, Hospital
 from .serializers import (
     PatientSerializer,
     HealthOfficerSerializer,
-    MedicalRecordSerializer
+    MedicalRecordSerializer,
+    HospitalSerializer
 )
 
 
@@ -154,3 +155,44 @@ class MedicalRecordRetrieveUpdateAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+class HospitalCreateListAPIView(APIView):
+    serializer_class = HospitalSerializer
+    #permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, format=None):
+        hospitals = Hospital.objects.all()
+        serializer = self.serializer_class(hospitals, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class HospitalRetrieveUpdateAPIView(APIView):
+    serializer_class = HospitalSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, uuid, format=None):
+        hospital = Hospital.objects.filter(uuid=uuid).first()
+
+        if hospital:
+            serializer = self.serializer_class(hospital)
+            return Response(serializer.data)
+        return Response({}, status=status.HTTP_404_NOT_FOUND)
+
+    def put(self, request, uuid, format=None):
+        hospital = Hospital.objects.filter(uuid=uuid).first()
+
+        if hospital:
+            serializer = self.serializer_class(instance=hospital, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({}, status=status.HTTP_404_NOT_FOUND)

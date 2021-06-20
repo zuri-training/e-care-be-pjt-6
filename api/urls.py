@@ -11,7 +11,9 @@ from .views import (
     HealthOfficerRetrieveUpdateAPIView,
     HealthOfficerCreateListAPIView,
     MedicalRecordListCreateAPIView,
-    MedicalRecordRetrieveUpdateAPIView
+    MedicalRecordRetrieveUpdateAPIView,
+    HospitalCreateListAPIView,
+    HospitalRetrieveUpdateAPIView
 )
 
 
@@ -51,6 +53,20 @@ urlpatterns = [
         name='medical-record-get-update'
     ),
 
+    path(
+        'user/hospitals/',
+        HospitalCreateListAPIView.as_view(),
+        name='hospital-list-create'
+    ),
+
+    path(
+        'user/hospital/<str:uuid>/',
+        HospitalRetrieveUpdateAPIView.as_view(),
+        name='hospital-update'
+    ),
+
     path('user/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('user/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+
+
 ]
