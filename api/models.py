@@ -22,7 +22,7 @@ class Patient(models.Model):
 
     def __repr__(self):
         return str(self.user)
-    
+
     __str__ = __repr__
 
     def get_absolute_url(self):
@@ -48,7 +48,7 @@ class HealthOfficer(models.Model):
 
     def __repr__(self):
         return str(self.user)
-    
+
     __str__ = __repr__
 
     def get_absolute_url(self):
@@ -65,11 +65,11 @@ class Hospital(models.Model):
     address = models.TextField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     patients = models.ManyToManyField('Patient')
-    health_officers = models.ManyToManyField('HealthOfficers')
+    health_officers = models.ManyToManyField('HealthOfficer')
 
     def __repr__(self):
         return str(self.name)
-    
+
     __str__ = __repr__
 
     def get_absolute_url(self):
@@ -82,15 +82,17 @@ class MedicalRecord(models.Model):
     test_type = models.CharField(max_length=256, default='Blood Test')
     test_result = models.TextField(default='')
     prescription = models.TextField(default='')
-    health_officer = models.OneToOneField('HealthOfficer', on_delete=models.CASCADE)
-    hospital = models.OneToOneField('Hospital', on_delete=models.CASCADE, null=True, blank=True)
+    health_officer = models.OneToOneField(
+        'HealthOfficer', on_delete=models.CASCADE)
+    hospital = models.OneToOneField(
+        'Hospital', on_delete=models.CASCADE, null=True, blank=True)
     patient = models.OneToOneField('Patient', on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(null=True, blank=True)
 
     def __repr__(self):
         return str(self.test_category)
-    
+
     __str__ = __repr__
 
     def get_absolute_url(self):

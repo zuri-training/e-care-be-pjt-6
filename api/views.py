@@ -2,6 +2,7 @@ from functools import partial
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
+from .utils import verification_mail
 
 from .models import Patient, HealthOfficer
 from .serializers import PatientSerializer, HealthOfficerSerializer
