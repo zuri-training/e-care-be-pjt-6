@@ -65,7 +65,7 @@ class Hospital(models.Model):
     address = models.TextField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     patients = models.ManyToManyField('Patient')
-    health_officers = models.ManyToManyField('HealthOfficers')
+    health_officer = models.ManyToManyField('HealthOfficer')
 
     def __repr__(self):
         return str(self.name)

@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 
 from rest_framework import serializers
 
-from .models import Patient, HealthOfficer
+from .models import Patient, HealthOfficer, Hospital
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -43,3 +43,21 @@ class HealthOfficerSerializer(serializers.ModelSerializer):
         officer = HealthOfficer.objects.create(**validated_data, user=user)
         officer.save()
         return officer
+
+class HospitalSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+    url = serializers.URLField(source='get_absolute_url', read_only=True)
+
+    class Meta:
+        model = Hospital
+        fields = '__all__'
+
+    def create(self, validated_data):
+        user_data = validated_data.pop('user')
+        user = User.objects.create_user(**user_data)
+        hospital = Hospital.objects.create(**validated_data, user=user)
+        hospital.save()
+        return hospital
+
+
+
