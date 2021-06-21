@@ -1,7 +1,8 @@
 import uuid
 
 from django.db import models
-from django.urls import reverse_lazy
+
+from rest_framework.reverse import reverse_lazy
 
 
 # Create your models here.
@@ -65,7 +66,7 @@ class Hospital(models.Model):
     address = models.TextField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     patients = models.ManyToManyField('Patient')
-    health_officer = models.ManyToManyField('HealthOfficer')
+    health_officers = models.ManyToManyField('HealthOfficer')
 
     def __repr__(self):
         return str(self.name)
@@ -82,11 +83,12 @@ class MedicalRecord(models.Model):
     test_type = models.CharField(max_length=256, default='Blood Test')
     test_result = models.TextField(default='')
     prescription = models.TextField(default='')
-    health_officer = models.OneToOneField(
-        'HealthOfficer', on_delete=models.CASCADE)
-    hospital = models.OneToOneField(
+    health_officer = models.ForeignKey(
+        'HealthOfficer', on_delete=models.CASCADE, null=True, blank=True)
+    hospital = models.ForeignKey(
         'Hospital', on_delete=models.CASCADE, null=True, blank=True)
-    patient = models.OneToOneField('Patient', on_delete=models.CASCADE)
+    patient = models.ForeignKey(
+        'Patient', on_delete=models.CASCADE, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(null=True, blank=True)
 
@@ -96,4 +98,7 @@ class MedicalRecord(models.Model):
     __str__ = __repr__
 
     def get_absolute_url(self):
-        return reverse_lazy('medical-record-get-update', args=[str(self.uuid)])
+        uuid1 = str(self.patient.uuid)
+        uuid2 = str(self.uuid)
+        return reverse_lazy(
+            'medical-record-get-update', args=[uuid1, uuid2])
