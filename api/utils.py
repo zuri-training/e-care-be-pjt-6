@@ -12,7 +12,7 @@ def mail_view(request, format=None):
 
 
 class SendMail:
-    @staticmethod:
+    @staticmethod
     def verification_mail(request):
 
         mail = mail_view(request)
