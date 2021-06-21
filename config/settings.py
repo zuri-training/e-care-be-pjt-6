@@ -13,15 +13,6 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import dj_database_url
 import os
 from pathlib import Path
-import os
-
-# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-EMAIL_HOST = os.getenv("EMAIL_HOST")
-EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS")
-# EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL")
-EMAIL_PORT = os.getenv("EMAIL_PORT")
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
