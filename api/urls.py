@@ -19,44 +19,64 @@ from .views import (
 
 urlpatterns = [
     path(
-         'user/patients/',
-         PatientCreateListAPIView.as_view(),
-         name='patient-list-create'
+         'user/patient/register/',
+         PatientCreateAPIView.as_view(),
+         name='patient-create'
     ),
+    
     path(
-         'user/patients/<str:uuid>/',
+        'user/patients/',
+        PatientListAPIView.as_view(),
+        name='patient-list'
+    ),
+    
+    path(
+         'user/patient/<str:uuid>/',
          PatientRetrieveUpdateAPIView.as_view(),
          name='patient-get-update'
     ),
 
 
     path(
-         "user/health-officers/",
-         HealthOfficerCreateListAPIView.as_view(),
-         name="health-officer-list-create"
+         "user/health-officer/register/",
+         HealthOfficerCreateAPIView.as_view(),
+         name="health-officer-create"
     ),
+    
     path(
-         "user/health-officers/<str:uuid>/",
+        'user/health-officers/',
+        HealthOfficerListAPIView.as_view(),
+        name='health-officer-list'
+    ),
+    
+    path(
+         "user/health-officer/<str:uuid>/",
          HealthOfficerRetrieveUpdateAPIView.as_view(),
          name="health-officer-get-update"
     ),
 
     path(
-        'user/patients/<str:uuid>/records/',
+        'user/patient/<str:uuid>/records/',
          MedicalRecordListCreateAPIView.as_view(),
          name='medical-record-get-create'
     ),
 
     path(
-        'user/patients/<str:uuid1>/records/<str:uuid2>/',
+        'user/patient/<str:uuid1>/records/<str:uuid2>/',
         MedicalRecordRetrieveUpdateAPIView.as_view(),
         name='medical-record-get-update'
     ),
 
     path(
+        'user/hospital/register/',
+        HospitalCreateAPIView.as_view(),
+        name='hospital-create'
+    ),
+    
+    path(
         'user/hospitals/',
-        HospitalCreateListAPIView.as_view(),
-        name='hospital-list-create'
+        HospitalListAPIView.as_view(),
+        name='hospital-list'
     ),
 
     path(
@@ -65,8 +85,17 @@ urlpatterns = [
         name='hospital-update'
     ),
 
-    path('user/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('user/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path(
+        'user/login/',
+        TokenObtainPairView.as_view(),
+        name='token_obtain_pair'
+    ),
+    
+    path(
+        'user/login/refresh/',
+        TokenRefreshView.as_view(),
+        name='token_refresh'
+    ),
 
 
 ]
