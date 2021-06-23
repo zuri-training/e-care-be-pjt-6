@@ -108,18 +108,9 @@ class HealthOfficerRetrieveUpdateAPIView(APIView):
         return Response({}, status=status.HTTP_404_NOT_FOUND)
 
 
-class MedicalRecordListCreateAPIView(APIView):
+class MedicalRecordCreateAPIView(APIView):
     serializer_class = MedicalRecordSerializer
     permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request, uuid, format=None):
-        patient = Patient.objects.filter(uuid=uuid).first()
-
-        if patient:
-            medical_records = MedicalRecord.objects.filter(patient=patient).all()
-            serializer = self.serializer_class(medical_records, many=True)
-            return Response(serializer.data)
-        return Response({}, status=status.HTTP_404_NOT_FOUND)
     
     def post(self, request, uuid, format=None):
         patient = Patient.objects.filter(uuid=uuid).first()
@@ -132,6 +123,20 @@ class MedicalRecordListCreateAPIView(APIView):
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({}, status=status.HTTP_404_NOT_FOUND)
+
+
+class MedicalRecordListAPIView(APIView):
+    serializer_class = MedicalRecordSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, uuid, format=None):
+        patient = Patient.objects.filter(uuid=uuid).first()
+
+        if patient:
+            medical_records = MedicalRecord.objects.filter(patient=patient).all()
+            serializer = self.serializer_class(medical_records, many=True)
+            return Response(serializer.data)
         return Response({}, status=status.HTTP_404_NOT_FOUND)
 
 
