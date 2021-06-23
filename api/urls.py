@@ -17,11 +17,14 @@ from .views import (
     MedicalRecordRetrieveUpdateAPIView,
     HospitalCreateAPIView,
     HospitalListAPIView,
-    HospitalRetrieveUpdateAPIView
+    HospitalRetrieveUpdateAPIView,
+    APIDocumentationView
 )
 
 
 urlpatterns = [
+    path('docs/', APIDocumentationView.as_view(), name='api-docs'),
+    
     path(
          'user/patient/register/',
          PatientCreateAPIView.as_view(),
