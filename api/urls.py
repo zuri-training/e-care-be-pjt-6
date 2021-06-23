@@ -12,7 +12,8 @@ from .views import (
     HealthOfficerRetrieveUpdateAPIView,
     HealthOfficerCreateAPIView,
     HealthOfficerListAPIView,
-    MedicalRecordListCreateAPIView,
+    MedicalRecordCreateAPIView,
+    MedicalRecordListAPIView,
     MedicalRecordRetrieveUpdateAPIView,
     HospitalCreateAPIView,
     HospitalListAPIView,
@@ -59,9 +60,15 @@ urlpatterns = [
     ),
 
     path(
+        'user/patient/<str:uuid>/record/new/',
+         MedicalRecordCreateAPIView.as_view(),
+         name='medical-record-create'
+    ),
+    
+    path(
         'user/patient/<str:uuid>/records/',
-         MedicalRecordListCreateAPIView.as_view(),
-         name='medical-record-get-create'
+         MedicalRecordListAPIView.as_view(),
+         name='medical-record-list'
     ),
 
     path(
