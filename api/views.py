@@ -1,5 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import Redirect
+from django.shortcuts import redirect
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -18,18 +18,12 @@ class APIDocumentationView(APIView):
     
     def get(self, request, format=None):
         postman_doc_link = "https://documenter.getpostman.com/view/16360417/TzecBjvf"
-        return Redirect(postman_doc_link, permanent=True)
+        return redirect(postman_doc_link, permanent=True)
 
 
 # Create your views here.
-class PatientCreateListAPIView(APIView):
+class PatientCreateAPIView(APIView):
     serializer_class = PatientSerializer
-    # permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request, format=None):
-        patients = Patient.objects.all()
-        serializer = self.serializer_class(patients, many=True)
-        return Response(serializer.data)
 
     def post(self, request, format=None):
         serializer = self.serializer_class(data=request.data)
@@ -38,6 +32,16 @@ class PatientCreateListAPIView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PatientListAPIView(APIView):
+    serializer_class = PatientSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, format=None):
+        patients = Patient.objects.all()
+        serializer = self.serializer_class(patients, many=True)
+        return Response(serializer.data)
 
 
 class PatientRetrieveUpdateAPIView(APIView):
@@ -65,14 +69,8 @@ class PatientRetrieveUpdateAPIView(APIView):
         return Response({}, status=status.HTTP_404_NOT_FOUND)
 
 
-class HealthOfficerCreateListAPIView(APIView):
+class HealthOfficerCreateAPIView(APIView):
     serializer_class = HealthOfficerSerializer
-    # permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request, format=None):
-        officers = HealthOfficer.objects.all()
-        serializer = self.serializer_class(officers, many=True)
-        return Response(serializer.data)
 
     def post(self, request, format=None):
         serializer = self.serializer_class(data=request.data)
@@ -81,6 +79,16 @@ class HealthOfficerCreateListAPIView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class HealthOfficerListAPIView(APIView):
+    serializer_class = HealthOfficerSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, format=None):
+        officers = HealthOfficer.objects.all()
+        serializer = self.serializer_class(officers, many=True)
+        return Response(serializer.data)
 
 
 class HealthOfficerRetrieveUpdateAPIView(APIView):
@@ -108,17 +116,9 @@ class HealthOfficerRetrieveUpdateAPIView(APIView):
         return Response({}, status=status.HTTP_404_NOT_FOUND)
 
 
-class MedicalRecordListCreateAPIView(APIView):
+class MedicalRecordCreateAPIView(APIView):
     serializer_class = MedicalRecordSerializer
-
-    def get(self, request, uuid, format=None):
-        patient = Patient.objects.filter(uuid=uuid).first()
-
-        if patient:
-            medical_records = MedicalRecord.objects.filter(patient=patient).all()
-            serializer = self.serializer_class(medical_records, many=True)
-            return Response(serializer.data)
-        return Response({}, status=status.HTTP_404_NOT_FOUND)
+    permission_classes = [permissions.IsAuthenticated]
     
     def post(self, request, uuid, format=None):
         patient = Patient.objects.filter(uuid=uuid).first()
@@ -134,8 +134,23 @@ class MedicalRecordListCreateAPIView(APIView):
         return Response({}, status=status.HTTP_404_NOT_FOUND)
 
 
+class MedicalRecordListAPIView(APIView):
+    serializer_class = MedicalRecordSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, uuid, format=None):
+        patient = Patient.objects.filter(uuid=uuid).first()
+
+        if patient:
+            medical_records = MedicalRecord.objects.filter(patient=patient).all()
+            serializer = self.serializer_class(medical_records, many=True)
+            return Response(serializer.data)
+        return Response({}, status=status.HTTP_404_NOT_FOUND)
+
+
 class MedicalRecordRetrieveUpdateAPIView(APIView):
     serializer_class = MedicalRecordSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     # uuid1-Patient uuid, uuid2-MedicalRecord uuid
     def get(self, request, uuid1, uuid2, format=None):
@@ -164,15 +179,9 @@ class MedicalRecordRetrieveUpdateAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class HospitalCreateListAPIView(APIView):
+class HospitalCreateAPIView(APIView):
     serializer_class = HospitalSerializer
-    #permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request, format=None):
-        hospitals = Hospital.objects.all()
-        serializer = self.serializer_class(hospitals, many=True)
-        return Response(serializer.data)
-
+    
     def post(self, request, format=None):
         serializer = self.serializer_class(data=request.data)
 
@@ -180,6 +189,16 @@ class HospitalCreateListAPIView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class HospitalListAPIView(APIView):
+    serializer_class = HospitalSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, format=None):
+        hospitals = Hospital.objects.all()
+        serializer = self.serializer_class(hospitals, many=True)
+        return Response(serializer.data)
 
 
 class HospitalRetrieveUpdateAPIView(APIView):
