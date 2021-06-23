@@ -1,4 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import Redirect
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -11,6 +12,13 @@ from .serializers import (
     MedicalRecordSerializer,
     HospitalSerializer
 )
+
+
+class APIDocumentationView(APIView):
+    
+    def get(self, request, format=None):
+        postman_doc_link = "https://documenter.getpostman.com/view/16360417/TzecBjvf"
+        return Redirect(postman_doc_link, permanent=True)
 
 
 # Create your views here.
