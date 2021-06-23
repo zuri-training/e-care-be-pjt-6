@@ -6,13 +6,16 @@ from rest_framework_simplejwt.views import (
 )
 
 from .views import (
-    PatientCreateListAPIView,
+    PatientCreateAPIView,
+    PatientListAPIView,
     PatientRetrieveUpdateAPIView,
     HealthOfficerRetrieveUpdateAPIView,
-    HealthOfficerCreateListAPIView,
+    HealthOfficerCreateAPIView,
+    HealthOfficerListAPIView,
     MedicalRecordListCreateAPIView,
     MedicalRecordRetrieveUpdateAPIView,
-    HospitalCreateListAPIView,
+    HospitalCreateAPIView,
+    HospitalListAPIView,
     HospitalRetrieveUpdateAPIView
 )
 
