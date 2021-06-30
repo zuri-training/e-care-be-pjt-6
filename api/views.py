@@ -1,5 +1,6 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect
+from django.utils import timezone
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -63,7 +64,7 @@ class PatientRetrieveUpdateAPIView(APIView):
             serializer = self.serializer_class(
                 instance=patient, data=request.data, partial=True)
             if serializer.is_valid():
-                serializer.save()
+                serializer.save(updated=timezone.now())
                 return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response({}, status=status.HTTP_404_NOT_FOUND)
@@ -110,7 +111,7 @@ class HealthOfficerRetrieveUpdateAPIView(APIView):
             serializer = self.serializer_class(
                 instance=officer, data=request.data, partial=True)
             if serializer.is_valid():
-                serializer.save()
+                serializer.save(updated=timezone.now())
                 return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response({}, status=status.HTTP_404_NOT_FOUND)
@@ -174,7 +175,7 @@ class MedicalRecordRetrieveUpdateAPIView(APIView):
             instance=medical_record, data=request.data)
         
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(updated=timezone.now())
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
