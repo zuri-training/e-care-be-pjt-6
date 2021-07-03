@@ -3,7 +3,7 @@ from config.settings import EMAIL_HOST_USER
 import json
 
 
-def Json_confirmed(request):
+def json_confirmation(request):
   try:
     data = json.loads(str(request))
   except ValueError:
@@ -11,7 +11,7 @@ def Json_confirmed(request):
   return data
 
 def mail_Function(request):
-    data = Json_confirmed(request)
+    data = json_confirmation(request)
     reciever = data["email"]
     subject = data["subject"]
     Body = data["body"]
