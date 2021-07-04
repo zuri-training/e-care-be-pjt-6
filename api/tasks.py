@@ -27,8 +27,3 @@ def my_first_task(request, duration):
     else:
         return (0)
     return ("task done")
-
-my_first_task.delay({"email":"owoborodeseye@gmail.com", "subject":"random", "body":"dope"}, 5)
-my_first_task.delay({"email":"owoborodeseye@gmail.com", "subject":"random", "body":"dope"}, 4)
-my_first_task.delay({"email":"owoborodeseye@gmail.com", "subject":"random", "body":"dope"}, 3)
-my_first_task.delay({"email":"owoborodeseye@gmail.com", "subject":"random", "body":"dope"}, 2)
