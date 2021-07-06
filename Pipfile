@@ -16,6 +16,9 @@ psycopg2-binary = "*"
 gunicorn = "*"
 whitenoise = "*"
 django-environ = "*"
+celery = "*"
+redis = "*"
+django-cors-headers = "*"
 
 [dev-packages]
 
