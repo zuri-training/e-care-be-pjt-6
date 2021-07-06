@@ -13,8 +13,14 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 
+import environ
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Initialize environment variables
+env = environ.Env()
+environ.Env.read_env()
 
 
 # Quick-start development settings - unsuitable for production
@@ -40,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'api',
     'rest_framework',
+    'corsheaders',
 ]
 
 REST_FRAMEWORK = {
@@ -49,6 +56,7 @@ REST_FRAMEWORK = {
 }
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -58,6 +66,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CORS_ALLOW_ALL_ORIGINS = os.environ['CORS_ALLOW_ALL_ORIGINS']
 
 ROOT_URLCONF = 'config.urls'
 
