@@ -128,7 +128,7 @@ class MedicalRecordCreateAPIView(APIView):
         if serializer.is_valid():
             serializer.save(hospital=hospital)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class MedicalRecordListAPIView(APIView):
@@ -142,7 +142,7 @@ class MedicalRecordListAPIView(APIView):
             medical_records = MedicalRecord.objects.filter(hospital=hospital).all()
             serializer = self.serializer_class(medical_records, many=True)
             return Response(serializer.data)
-        return Response({}, status=status.HTTP_404_NOT_FOUND)
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 class MedicalRecordRetrieveUpdateAPIView(APIView):
