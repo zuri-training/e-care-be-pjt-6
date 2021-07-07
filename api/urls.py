@@ -63,39 +63,39 @@ urlpatterns = [
     ),
 
     path(
-        'user/patient/<str:uuid>/record/new/',
+        'user/hospital/record/new/',
          MedicalRecordCreateAPIView.as_view(),
          name='medical-record-create'
     ),
     
     path(
-        'user/patient/<str:uuid>/records/',
+        'user/hospital/records/',
          MedicalRecordListAPIView.as_view(),
          name='medical-record-list'
     ),
 
     path(
-        'user/patient/<str:uuid1>/record/<str:uuid2>/',
+        'user/hospital/record/<str:uuid>/',
         MedicalRecordRetrieveUpdateAPIView.as_view(),
         name='medical-record-get-update'
     ),
 
     path(
-        'hospital/register/',
+        'user/hospital/register/',
         HospitalCreateAPIView.as_view(),
         name='hospital-create'
     ),
     
     path(
-        'hospitals/',
+        'user/hospitals/',
         HospitalListAPIView.as_view(),
         name='hospital-list'
     ),
 
     path(
-        'hospital/<str:uuid>/',
+        'user/hospital/<str:uuid>/',
         HospitalRetrieveUpdateAPIView.as_view(),
-        name='hospital-update'
+        name='hospital-get-update'
     ),
 
     path(

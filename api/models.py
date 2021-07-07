@@ -14,7 +14,7 @@ class Patient(models.Model):
     other_name = models.CharField(max_length=32, null=True, blank=True)
     phone_number = models.CharField(max_length=16, unique=True)
     gender = models.CharField(max_length=8, null=True, blank=True)
-    date_of_birth = models.DateTimeField(null=True, blank=True)
+    date_of_birth = models.DateField(null=True, blank=True)
     city = models.CharField(max_length=32, null=True, blank=True)
     lga = models.CharField(max_length=64, null=True, blank=True)
     state = models.CharField(max_length=32, null=True, blank=True)
@@ -57,6 +57,7 @@ class HealthOfficer(models.Model):
 
 
 class Hospital(models.Model):
+    user = models.OneToOneField('auth.User', on_delete=models.CASCADE)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     name = models.CharField(max_length=256)
     specialty = models.CharField(max_length=64, default='general')
@@ -83,12 +84,10 @@ class MedicalRecord(models.Model):
     test_type = models.CharField(max_length=256, default='Blood Test')
     test_result = models.TextField(default='')
     prescription = models.TextField(default='')
-    health_officer = models.ForeignKey(
-        'HealthOfficer', on_delete=models.CASCADE, null=True, blank=True)
     hospital = models.ForeignKey(
-        'Hospital', on_delete=models.CASCADE, null=True, blank=True)
+        'Hospital', on_delete=models.CASCADE)
     patient = models.ForeignKey(
-        'Patient', on_delete=models.CASCADE, null=True, blank=True)
+        'Patient', on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(null=True, blank=True)
 
@@ -98,7 +97,4 @@ class MedicalRecord(models.Model):
     __str__ = __repr__
 
     def get_absolute_url(self):
-        uuid1 = str(self.patient.uuid)
-        uuid2 = str(self.uuid)
-        return reverse_lazy(
-            'medical-record-get-update', args=[uuid1, uuid2])
+        return reverse_lazy('medical-record-get-update', args=[str(self.uuid)])

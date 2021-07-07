@@ -20,6 +20,7 @@ class PatientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patient
         fields = '__all__'
+        read_only_fields = ['id', 'created', 'updated']
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')
@@ -36,6 +37,10 @@ class HealthOfficerSerializer(serializers.ModelSerializer):
     class Meta:
         model = HealthOfficer
         fields = '__all__'
+        read_only_fields = [
+            'id', 'is_verified', 'is_admin',
+            'last_seen', 'created', 'updated'
+        ]
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')
@@ -45,20 +50,6 @@ class HealthOfficerSerializer(serializers.ModelSerializer):
         return officer
 
 
-class MedicalRecordSerializer(serializers.ModelSerializer):
-    url = serializers.URLField(source='get_absolute_url', read_only=True)
-
-    class Meta:
-        model = MedicalRecord
-        fields = '__all__'
-    
-    def create(self, validated_data):
-        medical_record = MedicalRecord.objects.create(
-            **validated_data, patient=self.context['patient'])
-        medical_record.save()
-        return medical_record
-
-
 class HospitalSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     url = serializers.URLField(source='get_absolute_url', read_only=True)
@@ -66,6 +57,7 @@ class HospitalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hospital
         fields = '__all__'
+        read_only_fields = ['id', 'patients', 'health_officers', 'created']
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')
@@ -73,3 +65,16 @@ class HospitalSerializer(serializers.ModelSerializer):
         hospital = Hospital.objects.create(**validated_data, user=user)
         hospital.save()
         return hospital
+
+
+class MedicalRecordSerializer(serializers.ModelSerializer):
+    url = serializers.URLField(source='get_absolute_url', read_only=True)
+    hospital = serializers.SlugRelatedField(
+        slug_field='name', queryset=Hospital.objects.all())
+    patient = serializers.SlugRelatedField(
+        slug_field='first_name', queryset=Patient.objects.all())
+
+    class Meta:
+        model = MedicalRecord
+        fields = '__all__'
+        read_only_fields = ['id', 'created', 'updated']
