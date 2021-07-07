@@ -69,10 +69,6 @@ class HospitalSerializer(serializers.ModelSerializer):
 
 class MedicalRecordSerializer(serializers.ModelSerializer):
     url = serializers.URLField(source='get_absolute_url', read_only=True)
-    hospital = serializers.SlugRelatedField(
-        slug_field='name', queryset=Hospital.objects.all())
-    patient = serializers.SlugRelatedField(
-        slug_field='first_name', queryset=Patient.objects.all())
 
     class Meta:
         model = MedicalRecord
