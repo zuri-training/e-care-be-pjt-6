@@ -119,7 +119,7 @@ class HealthOfficerRetrieveUpdateAPIView(APIView):
 
 class MedicalRecordCreateAPIView(APIView):
     serializer_class = MedicalRecordSerializer
-    #permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
     
     def post(self, request, format=None):
         hospital = Hospital.objects.filter(user=request.user).first()
@@ -187,7 +187,7 @@ class HospitalCreateAPIView(APIView):
 
 class HospitalListAPIView(APIView):
     serializer_class = HospitalSerializer
-    #permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, format=None):
         hospitals = Hospital.objects.all()
@@ -197,7 +197,7 @@ class HospitalListAPIView(APIView):
 
 class HospitalRetrieveUpdateAPIView(APIView):
     serializer_class = HospitalSerializer
-    #permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, uuid, format=None):
         hospital = Hospital.objects.filter(uuid=uuid).first()
