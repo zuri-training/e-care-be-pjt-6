@@ -18,7 +18,7 @@ from .serializers import (
 class APIDocumentationView(APIView):
     
     def get(self, request, format=None):
-        postman_doc_link = "https://documenter.getpostman.com/view/16360417/TzecBjvf"
+        postman_doc_link = "https://documenter.getpostman.com/view/16360417/Tzm5HHGL"
         return redirect(postman_doc_link, permanent=True)
 
 
