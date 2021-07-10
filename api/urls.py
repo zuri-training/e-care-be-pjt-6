@@ -18,7 +18,8 @@ from .views import (
     HospitalCreateAPIView,
     HospitalListAPIView,
     HospitalRetrieveUpdateAPIView,
-    APIDocumentationView
+    APIDocumentationView,
+    CustomTokenObtainPairView
 )
 
 
@@ -100,7 +101,7 @@ urlpatterns = [
 
     path(
         'user/login/',
-        TokenObtainPairView.as_view(),
+        CustomTokenObtainPairView.as_view(),
         name='token_obtain_pair'
     ),
     

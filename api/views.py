@@ -13,12 +13,15 @@ from .custom_permissions import (
     HealthOfficerOrPatientReadOnlyOnHealthOfficerRetrieveUpdate
 )
 
+from rest_framework_simplejwt.views import TokenObtainPairView
+
 from .models import Patient, HealthOfficer, MedicalRecord, Hospital
 from .serializers import (
     PatientSerializer,
     HealthOfficerSerializer,
     MedicalRecordSerializer,
-    HospitalSerializer
+    HospitalSerializer,
+    CustomTokenObtainPairSerializer
 )
 
 
@@ -27,6 +30,10 @@ class APIDocumentationView(APIView):
     def get(self, request, format=None):
         postman_doc_link = "https://documenter.getpostman.com/view/16360417/Tzm5HHGL"
         return redirect(postman_doc_link, permanent=True)
+
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
 
 
 # Create your views here.

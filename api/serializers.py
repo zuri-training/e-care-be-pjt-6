@@ -2,7 +2,34 @@ from django.contrib.auth.models import User
 
 from rest_framework import serializers
 
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
 from .models import Patient, HealthOfficer, MedicalRecord, Hospital
+
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Add type of user to the payload
+        user_categories = ["patient", "health_officer", "hospital"]
+        request_user_category = None
+        for user_category in user_categories:
+            if getattr(user, user_category, None) is not None:
+                request_user_category = user_category
+                break
+
+        token['usertype'] = request_user_category
+
+        return token
+    
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        refresh = self.get_token(self.user)
+        data["access"] = str(refresh.access_token)
+        data["usertype"] = str(refresh.payload["usertype"])
+        return data
 
 
 class UserSerializer(serializers.ModelSerializer):
