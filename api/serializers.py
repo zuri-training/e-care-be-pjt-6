@@ -13,14 +13,26 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
 
-class PatientSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
+class MedicalRecordSerializer(serializers.ModelSerializer):
     url = serializers.URLField(source='get_absolute_url', read_only=True)
 
     class Meta:
-        model = Patient
+        model = MedicalRecord
         fields = '__all__'
+        read_only_fields = ['id', 'created', 'updated', 'hospital']
+
+
+class PatientSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+    url = serializers.URLField(source='get_absolute_url', read_only=True)
+    records = MedicalRecordSerializer(many=True, read_only=True)
+    hospitals = serializers.SlugRelatedField(slug_field="name", read_only=True, many=True)
+
+    class Meta:
+        model = Patient
+        fields = "__all__"
         read_only_fields = ['id', 'created', 'updated']
+
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')
@@ -33,6 +45,7 @@ class PatientSerializer(serializers.ModelSerializer):
 class HealthOfficerSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     url = serializers.URLField(source='get_absolute_url', read_only=True)
+    hospitals = serializers.SlugRelatedField(slug_field="name", read_only=True, many=True)
 
     class Meta:
         model = HealthOfficer
@@ -65,12 +78,3 @@ class HospitalSerializer(serializers.ModelSerializer):
         hospital = Hospital.objects.create(**validated_data, user=user)
         hospital.save()
         return hospital
-
-
-class MedicalRecordSerializer(serializers.ModelSerializer):
-    url = serializers.URLField(source='get_absolute_url', read_only=True)
-
-    class Meta:
-        model = MedicalRecord
-        fields = '__all__'
-        read_only_fields = ['id', 'created', 'updated', 'hospital']
