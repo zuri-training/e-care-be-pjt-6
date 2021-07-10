@@ -1,5 +1,7 @@
 import uuid
 
+from datetime import datetime
+
 from django.db import models
 
 from rest_framework.reverse import reverse_lazy
@@ -14,7 +16,7 @@ class Patient(models.Model):
     other_name = models.CharField(max_length=32, null=True, blank=True)
     phone_number = models.CharField(max_length=16, unique=True)
     gender = models.CharField(max_length=8, null=True, blank=True)
-    date_of_birth = models.DateTimeField(null=True, blank=True)
+    date_of_birth = models.DateField(default = datetime.now)
     city = models.CharField(max_length=32, null=True, blank=True)
     lga = models.CharField(max_length=64, null=True, blank=True)
     state = models.CharField(max_length=32, null=True, blank=True)
@@ -23,7 +25,7 @@ class Patient(models.Model):
 
     def __repr__(self):
         return str(self.user)
-    
+
     __str__ = __repr__
 
     def get_absolute_url(self):
@@ -49,7 +51,7 @@ class HealthOfficer(models.Model):
 
     def __repr__(self):
         return str(self.user)
-    
+
     __str__ = __repr__
 
     def get_absolute_url(self):
@@ -70,7 +72,7 @@ class Hospital(models.Model):
 
     def __repr__(self):
         return str(self.name)
-    
+
     __str__ = __repr__
 
     def get_absolute_url(self):
@@ -94,7 +96,7 @@ class MedicalRecord(models.Model):
 
     def __repr__(self):
         return str(self.test_category)
-    
+
     __str__ = __repr__
 
     def get_absolute_url(self):
