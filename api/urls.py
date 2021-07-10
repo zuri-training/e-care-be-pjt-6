@@ -19,7 +19,8 @@ from .views import (
     HospitalListAPIView,
     HospitalRetrieveUpdateAPIView,
     APIDocumentationView,
-    CustomTokenObtainPairView
+    CustomTokenObtainPairView,
+    HospitalAndHealthOfficerSearchView
 )
 
 
@@ -110,6 +111,12 @@ urlpatterns = [
         TokenRefreshView.as_view(),
         name='token_refresh'
     ),
+
+    path(
+        'user/search/',
+        HospitalAndHealthOfficerSearchView.as_view(),
+        name='hospital-health-officers-search'
+    )
 
 
 ]
