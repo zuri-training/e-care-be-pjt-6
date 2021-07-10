@@ -1,6 +1,7 @@
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, FieldError
 from django.shortcuts import redirect
 from django.utils import timezone
+from django.db.models import Q
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -34,6 +35,62 @@ class APIDocumentationView(APIView):
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
+
+
+class HospitalAndHealthOfficerSearchView(APIView):
+    def post(self, request, format=None):
+        # get list of search terms
+        terms = request.data.get("keywords", [])
+
+        # get queryset of Hospital and HealthOfficer models
+        hospitals = Hospital.objects.all()
+        health_officers = HealthOfficer.objects.all()
+
+        # build search object
+        hospital_q = Q()
+        health_officer_q = Q()
+
+        for term in terms:
+            hospital_q.add((
+                Q(state__icontains=term) |\
+                Q(city__icontains=term) |\
+                Q(lga__icontains=term) |\
+                Q(specialty__icontains=term) |\
+                Q(name__icontains=term) |\
+                Q(address__icontains=term)
+                ),
+                hospital_q.connector
+            )
+
+            health_officer_q.add((
+                Q(state__icontains=term) |\
+                Q(city__icontains=term) |\
+                Q(lga__icontains=term) |\
+                Q(specialty__icontains=term) |\
+                Q(role__icontains=term) |\
+                Q(gender__icontains=term) |\
+                Q(first_name__icontains=term) |\
+                Q(last_name__icontains=term) |\
+                Q(other_name__icontains=term) |\
+                Q(licence__icontains=term) |\
+                Q(is_verified__icontains=term)
+                ),
+                health_officer_q.connector
+            )
+        
+        # Get filtered results
+        hospitals = hospitals.filter(hospital_q)
+        health_officers = health_officers.filter(health_officer_q)
+
+
+        hospitals = HospitalSerializer(hospitals, many=True).data
+        health_officers = HealthOfficerSerializer(health_officers, many=True).data
+        data = {
+            "hospitals": hospitals,
+            "health_officers": health_officers
+        }
+
+        return Response(data)
 
 
 # Create your views here.
