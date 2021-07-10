@@ -18,6 +18,7 @@ class Patient(models.Model):
     city = models.CharField(max_length=32, null=True, blank=True)
     lga = models.CharField(max_length=64, null=True, blank=True)
     state = models.CharField(max_length=32, null=True, blank=True)
+    address = models.TextField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(null=True, blank=True)
 
@@ -66,8 +67,8 @@ class Hospital(models.Model):
     state = models.CharField(max_length=16)
     address = models.TextField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
-    patients = models.ManyToManyField('Patient')
-    health_officers = models.ManyToManyField('HealthOfficer')
+    patients = models.ManyToManyField('Patient', related_name="hospitals")
+    health_officers = models.ManyToManyField('HealthOfficer', related_name="hospitals")
 
     def __repr__(self):
         return str(self.name)
@@ -85,9 +86,9 @@ class MedicalRecord(models.Model):
     test_result = models.TextField(default='')
     prescription = models.TextField(default='')
     hospital = models.ForeignKey(
-        'Hospital', on_delete=models.CASCADE)
+        'Hospital', related_name="records", on_delete=models.CASCADE)
     patient = models.ForeignKey(
-        'Patient', on_delete=models.CASCADE)
+        'Patient', related_name="records", on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(null=True, blank=True)
 
