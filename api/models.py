@@ -9,17 +9,22 @@ from rest_framework.reverse import reverse_lazy
 
 # Create your models here.
 class Patient(models.Model):
-    user = models.OneToOneField('auth.User', on_delete=models.CASCADE)
+    user = models.OneToOneField('auth.User', related_name="patient", on_delete=models.CASCADE)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     first_name = models.CharField(max_length=32, null=True, blank=True)
     last_name = models.CharField(max_length=32, null=True, blank=True)
     other_name = models.CharField(max_length=32, null=True, blank=True)
     phone_number = models.CharField(max_length=16, unique=True)
     gender = models.CharField(max_length=8, null=True, blank=True)
+<<<<<<< HEAD
     date_of_birth = models.DateField(default = datetime.now)
+=======
+    date_of_birth = models.DateField(null=True, blank=True)
+>>>>>>> fdef88fda8035c933b2d432bd1544c6376803c89
     city = models.CharField(max_length=32, null=True, blank=True)
     lga = models.CharField(max_length=64, null=True, blank=True)
     state = models.CharField(max_length=32, null=True, blank=True)
+    address = models.TextField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(null=True, blank=True)
 
@@ -33,7 +38,7 @@ class Patient(models.Model):
 
 
 class HealthOfficer(models.Model):
-    user = models.OneToOneField('auth.User', on_delete=models.CASCADE)
+    user = models.OneToOneField('auth.User', related_name="health_officer", on_delete=models.CASCADE)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     first_name = models.CharField(max_length=32, null=True, blank=True)
     last_name = models.CharField(max_length=32, null=True, blank=True)
@@ -41,6 +46,9 @@ class HealthOfficer(models.Model):
     phone_number = models.CharField(max_length=16, unique=True)
     gender = models.CharField(max_length=8, null=True, blank=True)
     specialty = models.CharField(max_length=64, null=True, blank=True)
+    city = models.CharField(max_length=16, null=True, blank=True)
+    lga = models.CharField(max_length=64, null=True, blank=True)
+    state = models.CharField(max_length=16, null=True, blank=True)
     role = models.CharField(max_length=64, null=True, blank=True)
     licence = models.CharField(max_length=256, null=True, blank=True)
     is_verified = models.BooleanField(default=False)
@@ -59,6 +67,7 @@ class HealthOfficer(models.Model):
 
 
 class Hospital(models.Model):
+    user = models.OneToOneField('auth.User', related_name="hospital", on_delete=models.CASCADE)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     name = models.CharField(max_length=256)
     specialty = models.CharField(max_length=64, default='general')
@@ -67,8 +76,8 @@ class Hospital(models.Model):
     state = models.CharField(max_length=16)
     address = models.TextField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
-    patients = models.ManyToManyField('Patient')
-    health_officers = models.ManyToManyField('HealthOfficer')
+    patients = models.ManyToManyField('Patient', related_name="hospitals")
+    health_officers = models.ManyToManyField('HealthOfficer', related_name="hospitals")
 
     def __repr__(self):
         return str(self.name)
@@ -85,12 +94,10 @@ class MedicalRecord(models.Model):
     test_type = models.CharField(max_length=256, default='Blood Test')
     test_result = models.TextField(default='')
     prescription = models.TextField(default='')
-    health_officer = models.ForeignKey(
-        'HealthOfficer', on_delete=models.CASCADE, null=True, blank=True)
     hospital = models.ForeignKey(
-        'Hospital', on_delete=models.CASCADE, null=True, blank=True)
+        'Hospital', related_name="records", on_delete=models.CASCADE)
     patient = models.ForeignKey(
-        'Patient', on_delete=models.CASCADE, null=True, blank=True)
+        'Patient', related_name="records", on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(null=True, blank=True)
 
@@ -100,7 +107,4 @@ class MedicalRecord(models.Model):
     __str__ = __repr__
 
     def get_absolute_url(self):
-        uuid1 = str(self.patient.uuid)
-        uuid2 = str(self.uuid)
-        return reverse_lazy(
-            'medical-record-get-update', args=[uuid1, uuid2])
+        return reverse_lazy('medical-record-get-update', args=[str(self.uuid)])

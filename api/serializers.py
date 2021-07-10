@@ -2,7 +2,34 @@ from django.contrib.auth.models import User
 
 from rest_framework import serializers
 
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
 from .models import Patient, HealthOfficer, MedicalRecord, Hospital
+
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Add type of user to the payload
+        user_categories = ["patient", "health_officer", "hospital"]
+        request_user_category = None
+        for user_category in user_categories:
+            if getattr(user, user_category, None) is not None:
+                request_user_category = user_category
+                break
+
+        token['usertype'] = request_user_category
+
+        return token
+    
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        refresh = self.get_token(self.user)
+        data["access"] = str(refresh.access_token)
+        data["usertype"] = str(refresh.payload["usertype"])
+        return data
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -13,13 +40,26 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
 
-class PatientSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
+class MedicalRecordSerializer(serializers.ModelSerializer):
     url = serializers.URLField(source='get_absolute_url', read_only=True)
 
     class Meta:
-        model = Patient
+        model = MedicalRecord
         fields = '__all__'
+        read_only_fields = ['id', 'created', 'updated', 'hospital']
+
+
+class PatientSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+    url = serializers.URLField(source='get_absolute_url', read_only=True)
+    records = MedicalRecordSerializer(many=True, read_only=True)
+    hospitals = serializers.SlugRelatedField(slug_field="name", read_only=True, many=True)
+
+    class Meta:
+        model = Patient
+        fields = "__all__"
+        read_only_fields = ['id', 'created', 'updated']
+
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')
@@ -32,10 +72,15 @@ class PatientSerializer(serializers.ModelSerializer):
 class HealthOfficerSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     url = serializers.URLField(source='get_absolute_url', read_only=True)
+    hospitals = serializers.SlugRelatedField(slug_field="name", read_only=True, many=True)
 
     class Meta:
         model = HealthOfficer
         fields = '__all__'
+        read_only_fields = [
+            'id', 'is_verified', 'is_admin',
+            'last_seen', 'created', 'updated'
+        ]
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')
@@ -45,20 +90,6 @@ class HealthOfficerSerializer(serializers.ModelSerializer):
         return officer
 
 
-class MedicalRecordSerializer(serializers.ModelSerializer):
-    url = serializers.URLField(source='get_absolute_url', read_only=True)
-
-    class Meta:
-        model = MedicalRecord
-        fields = '__all__'
-    
-    def create(self, validated_data):
-        medical_record = MedicalRecord.objects.create(
-            **validated_data, patient=self.context['patient'])
-        medical_record.save()
-        return medical_record
-
-
 class HospitalSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     url = serializers.URLField(source='get_absolute_url', read_only=True)
@@ -66,6 +97,7 @@ class HospitalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hospital
         fields = '__all__'
+        read_only_fields = ['id', 'patients', 'health_officers', 'created']
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')
