@@ -7,7 +7,11 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import Patient, HealthOfficer, MedicalRecord, Hospital
 
 
-class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+class EmailTokenObtainPairSerializer(TokenObtainPairSerializer):
+    username_field = User.EMAIL_FIELD
+
+
+class CustomTokenObtainPairSerializer(EmailTokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
