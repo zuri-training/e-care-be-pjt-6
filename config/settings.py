@@ -106,6 +106,12 @@ DATABASES = {
 }
 
 
+# Change default authentication backend to use email
+AUTHENTICATION_BACKENDS = [
+    "config.email_backend.EmailBackend"
+]
+
+
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
