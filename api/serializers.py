@@ -24,7 +24,10 @@ class CustomTokenObtainPairSerializer(EmailTokenObtainPairSerializer):
                 request_user_category = user_category
                 break
 
-        token['usertype'] = request_user_category
+        token["usertype"] = request_user_category
+
+        user_obj = getattr(user, request_user_category, None)
+        token["user_id"] = str(getattr(user_obj, "uuid", None))
 
         return token
     
@@ -33,6 +36,8 @@ class CustomTokenObtainPairSerializer(EmailTokenObtainPairSerializer):
         refresh = self.get_token(self.user)
         data["access"] = str(refresh.access_token)
         data["usertype"] = str(refresh.payload["usertype"])
+        data["user_id"] = str(refresh.payload["user_id"])
+
         return data
 
 
